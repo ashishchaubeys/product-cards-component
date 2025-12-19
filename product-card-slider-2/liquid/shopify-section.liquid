@@ -1,0 +1,848 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        :root {
+            --swiperNavigationColor: #000;
+            --swiperNavigationBackground: #e5e5e5;
+        }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+        }
+        .container {
+            /* max-width: 1600px; */
+            margin: 0 auto;
+            padding: 60px 0px;
+            display: flex;
+            flex-direction: row;
+            gap: 60px;
+            align-items: flex-start;
+        }
+        .hero-section {
+            flex: 0.6;
+            min-height: 600px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.4));
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 50px;
+            z-index: 1;
+        }
+        .limited-offers {
+            background: rgba(255,255,255,0.95);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 15px;
+            align-self: flex-start;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            margin: 0 0 30px 0;
+            max-width: 500px;
+            line-height: 1.2;
+        }
+        .shop-btn {
+            background: white;
+            color: #333;
+            padding: 15px 35px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-start;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .shop-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .deals-section {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .deals-title {
+            font-size: 36px;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        .swiper {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            min-height: 400px;
+        }
+        .swiper-navigation-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .swiper-wrapper {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+        }
+        .swiper-slide {
+            background: #f5f5f5;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            flex-shrink: 0;
+            flex-grow: 0;
+            box-sizing: border-box;
+            max-width: 100%;
+            width: auto;
+        }
+        .product-img-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+            background: #f5f5f5;
+            flex-shrink: 0;
+        }
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .eye-icon {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 35px;
+            height: 35px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 2;
+            font-size: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .eye-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .discount-badge,
+        .soldout-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+        .soldout-badge {
+            background: #333;
+            color: white;
+        }
+        .product-info {
+            padding: 20px 15px 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f5f5f5;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .product-name {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+            font-weight: 500;
+            font-family: inherit;
+            letter-spacing: 0.5;
+        }
+        .color-options {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .color-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        .price-container {
+            position: absolute;
+            top: 15px;
+            left: 60px;
+            z-index: 2;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            animation: slideInLeft 0.5s ease-out;
+        }
+        .price-container:hover {
+            background: #333;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .price-container .price {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+        .price-container:hover .price {
+            color: white;
+        }
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 16px;
+            margin-left: 8px;
+        }
+        .sold-out-text {
+            color: #999;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .grid-icon {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 10px;
+            align-self: flex-end;
+            cursor: pointer;
+            margin-top: auto;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: background 0.3s;
+        }
+        .grid-icon:hover {
+            background: #f5f5f5;
+        }
+
+        /* Navigation & Progress */
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: #333;
+            width: 45px;
+            height: 45px;
+            background: white;
+            /* border-radius: 50%; */  /*Need circle then uncoment 50% border-radius*/
+            {% comment %} box-shadow: 0 4px 15px rgba(0,0,0,0.15); {% endcomment %}
+            margin: 0;
+            position: relative;
+            top: auto;
+            left: auto;
+            right: auto;
+            flex-shrink: 0;
+        }
+        .swiper-button-next:after,
+        .swiper-button-prev:after {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .swiper-pagination {
+            position: relative;
+            flex: 1;
+            height: 5px;
+            margin: 0;
+            width: auto;
+        }
+        .swiper-pagination-progressbar {
+            background: #e0e0e0;
+            height: 5px;
+            border-radius: 3px;
+            top: 0;
+            position: relative;
+        }
+        .swiper-pagination-progressbar-fill {
+            background: #333;
+        }
+
+        /* Swiper navigation / pagination styling from theme */
+        .swiper-navigation {
+            pointer-events: none;
+            align-items: center;
+            gap: 20px;
+            z-index: 1;
+            position: relative;
+        }
+        .swiper-navigation:not(.swiper-navigation-expand).nav-left {
+            justify-content: flex-start;
+        }
+        .swiper-navigation:not(.swiper-navigation-expand).nav-center {
+            justify-content: center;
+        }
+        .swiper-navigation:not(.swiper-navigation-expand).nav-right {
+            justify-content: flex-end;
+            display: flex;
+            flex-direction: row;
+        }
+        .swiper-navigation-expand {
+            justify-content: space-between;
+            position: absolute;
+            inset-block: 0;
+            inset-inline: 20px;
+            z-index: 1;
+            height: 100%;
+            padding-block: 10px;
+        }
+        .swiper-navigation-expand.nav-top {
+            align-items: flex-start;
+            bottom: auto;
+        }
+        .swiper-navigation-expand.nav-bottom {
+            top: auto;
+            align-items: flex-end;
+        }
+        .swiper-pagination + .swiper-navigation-expand {
+            inset-block: -20px;
+        }
+        .swiper-navigation .swiper-button-next,
+        .swiper-navigation .swiper-button-prev {
+            position: relative;
+            inset: 0;
+        }
+        .swiper-navigation .swiper-button-next:after,
+        .swiper-navigation .swiper-button-prev:after {
+            content: none;
+        }
+        .swiper-button-next svg, .swiper-button-prev svg {
+            height: 25px;
+        }
+        .swiper-navigation .swiper-nav {
+            --swiperNavigationSize: 70px;
+            --svgSize: 42px;
+            pointer-events: auto;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            color: var(--swiperNavigationColor, #000);
+            width: var(--swiperNavigationSize);
+            height: var(--swiperNavigationSize);
+            justify-content: center;
+            /* border-radius: var(--blockRadiusSmall, 999px); */
+            height: 25px !important;
+        }
+        button#swiper-next-{{ section.id }},
+        button#swiper-prev-{{ section.id }} {
+            padding: 0;
+        }
+        button#swiper-next-{{ section.id }}:hover,
+        button#swiper-prev-{{ section.id }}:hover {
+            background-color: unset;
+            border: unset;
+        }
+        .swiper-navigation.with-background .swiper-nav {
+            background: var(--swiperNavigationBackground, #fff);
+            padding: 3px;
+        }
+        .swiper-navigation.light .swiper-nav {
+            --swiperNavigationColor: #fff;
+        }
+        .swiper-navigation.dark .swiper-nav {
+            --swiperNavigationColor: #000;
+        }
+        .swiper-navigation .swiper-nav.swiper-button-disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+        .swiper-navigation:has(.swiper-nav.swiper-button-disabled + .swiper-nav.swiper-button-disabled) {
+            display: none;
+        }
+
+        .swiper-controls {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 20px;
+            margin-block-start: 20px;
+        }
+
+        .swiper-horizontal > .swiper-pagination-progressbar,
+        .swiper-pagination-progressbar.swiper-pagination-horizontal,
+        .swiper-pagination-progressbar.swiper-pagination-vertical.swiper-pagination-progressbar-opposite,
+        .swiper-vertical > .swiper-pagination-progressbar.swiper-pagination-progressbar-opposite {
+            height: 1px;
+        }
+
+        .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+            background: var(--swiperNavigationColor, #000);
+            height: 1px;
+            top: auto;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+                padding: 40px 24px;
+                gap: 40px;
+            }
+            .hero-section {
+                width: 100%;
+                min-height: 500px;
+                height: 500px;
+            }
+            .deals-section {
+                width: 100%;
+                flex: none;
+                overflow: visible;
+            }
+            .swiper {
+                width: 100%;
+                overflow: visible;
+            }
+            .hero-title {
+                font-size: 40px;
+            }
+            .deals-title {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                padding: 32px 20px;
+            }
+            .hero-section {
+                min-height: 450px;
+                height: 450px;
+            }
+            .hero-overlay {
+                padding: 32px 28px;
+            }
+            .hero-title {
+                font-size: 32px;
+            }
+            .shop-btn {
+                font-size: 16px;
+                padding: 12px 28px;
+            }
+            .product-img-container {
+                height: 260px;
+            }
+            .price-container {
+                left: 55px;
+                padding: 6px 12px;
+            }
+            .price-container .price {
+                font-size: 12px;
+            }
+            .swiper {
+                min-height: 350px;
+            }
+            .swiper-controls {
+                grid-template-columns: 1fr auto;
+                row-gap: 16px;
+            }
+            .swiper-navigation {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 24px 16px;
+            }
+            .hero-section {
+                min-height: 400px;
+                height: 400px;
+            }
+            .hero-overlay {
+                padding: 24px 20px;
+            }
+            .hero-title {
+                font-size: 26px;
+            }
+            .deals-title {
+                font-size: 24px;
+            }
+            .product-img-container {
+                height: 220px;
+            }
+            .eye-icon {
+                width: 30px;
+                height: 30px;
+                top: 12px;
+                left: 12px;
+                font-size: 14px;
+            }
+            .price-container {
+                left: 50px;
+                top: 12px;
+                padding: 5px 10px;
+            }
+            .price-container .price {
+                font-size: 11px;
+            }
+            .product-info {
+                padding: 16px 18px 20px;
+            }
+            .swiper {
+                min-height: 300px;
+            }
+            .swiper-navigation {
+                justify-content: space-between;
+            }
+        }
+    </style>
+    {%- assign collections_list = section.settings.collection_list -%}
+
+    <div class="container {{ section.settings.container_type }}">
+        <!-- Hero Section - Fixed on Left -->
+        {%- if section.settings.main_collection_banner != blank -%}
+            <div class="hero-section">
+                <img src="{{ section.settings.main_collection_banner | image_url: width: 1200 }}" 
+                     alt="{{ section.settings.main_collection_banner.alt | default: 'Collection Banner' }}" 
+                     class="hero-img"
+                     loading="lazy"
+                     width="{{ section.settings.main_collection_banner.width }}"
+                     height="{{ section.settings.main_collection_banner.height }}">
+                <div class="hero-overlay">
+                    <div class="limited-offers">Limited Offers</div>
+                    <h1 class="hero-title">Unlock Exclusive<br>Savings On<br>New Arrivals</h1>
+                    {%- if section.settings.collection_list.first != blank -%}
+                        <a href="{{ section.settings.collection_list.first.url }}" class="shop-btn">Shop Now →</a>
+                    {%- else -%}
+                        <a href="/collections/all" class="shop-btn">Shop Now →</a>
+                    {%- endif -%}
+                </div>
+            </div>
+        {%- endif -%}
+
+        <!-- Deals Section - Slider on Right -->
+        <div class="deals-section">
+            <h2 class="deals-title">{{section.settings.collection_title | escape }}</h2>
+
+            {%- if collections_list != blank and collections_list.size > 0 -%}
+                <div class="swiper slides-equal-height" id="collection-swiper-{{ section.id }}">
+                    <div class="swiper-wrapper">
+                        {%- for collection in collections_list -%}
+                            <div class="swiper-slide">
+                                <a href="{{ collection.url }}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+                                    <div class="product-img-container">
+                                        <div class="eye-icon">👁</div>
+                                        {%- assign product_count = collection.all_products_count | default: collection.products_count | default: collection.products.size -%}
+                                        {%- if product_count > 0 -%}
+                                            <div class="price-container">
+                                                <span class="price">
+                                                    {{ product_count }} 
+                                                    {%- if product_count == 1 -%}
+                                                        / nos
+                                                    {%- else -%}
+                                                        / nos
+                                                    {%- endif -%}
+                                                </span>
+                                            </div>
+                                        {%- endif -%}
+                                        {%- if collection.image != blank -%}
+                                            <img src="{{ collection.image | image_url: width: 600 }}" 
+                                                 alt="{{ collection.image.alt | default: collection.title | escape }}" 
+                                                 class="product-img"
+                                                 loading="lazy"
+                                                 width="{{ collection.image.width }}"
+                                                 height="{{ collection.image.height }}">
+                                        {%- elsif collection.products.first.featured_image != blank -%}
+                                            <img src="{{ collection.products.first.featured_image | image_url: width: 600 }}" 
+                                                 alt="{{ collection.title | escape }}" 
+                                                 class="product-img"
+                                                 loading="lazy"
+                                                 width="{{ collection.products.first.featured_image.width }}"
+                                                 height="{{ collection.products.first.featured_image.height }}">
+                                        {%- else -%}
+                                            <div style="width: 100%; height: 100%; background: #e5e5e5; display: flex; align-items: center; justify-content: center; color: #999;">
+                                                <span>No Image</span>
+                                            </div>
+                                        {%- endif -%}
+                                    </div>
+                                    <div class="product-info">
+                                        <h3 class="product-name">{{ collection.title }}</h3>
+                                    </div>
+                                </a>
+                            </div>
+                        {%- endfor -%}
+                    </div>
+                </div>
+            {%- else -%}
+                <div class="swiper slides-equal-height">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" style="padding: 40px; text-align: center;">
+                            <p>No collections found. Please select collections in the theme editor.</p>
+                        </div>
+                    </div>
+                </div>
+            {%- endif -%}
+
+            <!-- Navigation arrows & progress bar -->
+            {%- if collections_list != blank and collections_list.size > 0 -%}
+                <div class="swiper-controls">
+                    <div class="swiper-pagination swiper-pagination-progressbar swiper-pagination-horizontal" id="swiper-pagination-{{ section.id }}"></div>
+
+                    <div class="swiper-navigation nav-right">
+                        <button class="swiper-nav swiper-nav-prev swiper-button-prev" id="swiper-prev-{{ section.id }}" type="button" aria-label="Previous slide">
+                            <svg width="42" height="18" viewBox="0 0 42 18" fill="none">
+                                <path d="M0.000782013 9H41.3008V10H2.40078L9.70078 17.3L9.00078 18L0.000782013 9Z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                        <button class="swiper-nav swiper-nav-next swiper-button-next" id="swiper-next-{{ section.id }}" type="button" aria-label="Next slide">
+                            <svg width="42" height="18" viewBox="0 0 42 18" fill="none">
+                                <path d="M41.9992 9H0.699219V8H39.5992L32.2992 0.7L32.9992 0L41.9992 9Z" fill="currentColor"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            {%- endif -%}
+        </div>
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        {%- if collections_list != blank and collections_list.size > 0 -%}
+        (function() {
+            const sectionId = '{{ section.id }}';
+            const swiperSelector = '#collection-swiper-' + sectionId;
+            let swiperInstance = null;
+            let retryCount = 0;
+            const maxRetries = 50; // Maximum 5 seconds of retries
+            
+            function initSwiper() {
+                retryCount++;
+                
+                // Stop retrying after max attempts
+                if (retryCount > maxRetries) {
+                    console.error('Swiper initialization failed after maximum retries');
+                    return;
+                }
+                
+                // Wait for Swiper library to be ready
+                if (typeof Swiper === 'undefined') {
+                    setTimeout(initSwiper, 100);
+                    return;
+                }
+                
+                const swiperElement = document.querySelector(swiperSelector);
+                const paginationEl = document.querySelector('#swiper-pagination-' + sectionId);
+                const nextEl = document.querySelector('#swiper-next-' + sectionId);
+                const prevEl = document.querySelector('#swiper-prev-' + sectionId);
+                
+                if (!swiperElement || !paginationEl || !nextEl || !prevEl) {
+                    setTimeout(initSwiper, 100);
+                    return;
+                }
+                
+                // Destroy existing swiper instance if it exists
+                if (swiperInstance) {
+                    try {
+                        swiperInstance.destroy(true, true);
+                    } catch(e) {}
+                    swiperInstance = null;
+                }
+                
+                try {
+                    swiperInstance = new Swiper(swiperSelector, {
+                    // Base config for the smallest widths (< 320px)
+                    slidesPerView: 1.5,
+                    spaceBetween: 20,
+                    loop: false,
+                    autoplay: {
+                        delay: 5000,
+                        disableOnInteraction: true,
+                    },
+                    grabCursor: true,
+                    allowTouchMove: true,
+                    watchOverflow: true,
+                    watchSlidesProgress: true,
+                    observer: true,
+                    observeParents: true,
+                    observeSlideChildren: true,
+                    resizeObserver: true,
+                    pagination: {
+                        el: '#swiper-pagination-' + sectionId,
+                        type: 'progressbar',
+                    },
+                    navigation: {
+                        nextEl: '#swiper-next-' + sectionId,
+                        prevEl: '#swiper-prev-' + sectionId,
+                    },
+                    breakpoints: {
+                        // From 320px and up
+                        320: {
+                            slidesPerView: 1.1,
+                            spaceBetween: 20,
+                        },
+                        // From 375px and up
+                        375: {
+                            slidesPerView: 1.2,
+                            spaceBetween: 20,
+                        },
+                        // From 425px and up
+                        425: {
+                            slidesPerView: 1.2,
+                            spaceBetween: 20,
+                        },
+                        // From 640px and up
+                        640: {
+                            slidesPerView: 1.5,
+                            spaceBetween: 20,
+                        },
+                        768: {
+                            slidesPerView: 2.5,
+                            spaceBetween: 25,
+                        },
+                        1024: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        },
+                        1280: {
+                            slidesPerView: 4,
+                            spaceBetween: 30,
+                        }
+                    },
+                    on: {
+                        init: function() {
+                            this.update();
+                        },
+                        resize: function() {
+                            this.update();
+                        }
+                    }
+                });
+                } catch(error) {
+                    console.error('Swiper initialization error:', error);
+                }
+            }
+            
+            // Initialize Swiper when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(initSwiper, 200);
+                });
+            } else {
+                setTimeout(initSwiper, 200);
+            }
+            
+            // Handle window resize with debounce
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    if (swiperInstance) {
+                        swiperInstance.update();
+                        swiperInstance.updateSlides();
+                        swiperInstance.updateSlidesClasses();
+                    }
+                }, 250);
+            });
+        })();
+        {%- endif -%}
+    </script>
+
+{% schema %}
+{
+    "name": "Stylish Collection-List",
+    "tag": "section",
+    "settings": [
+        {
+            "type": "header",
+            "content": "Select Main Banner"
+        },//t4s-container-inner 
+        {
+            "type": "select",
+            "id": "container_type",
+            "label": "Container Type",
+            "options": [
+                { "value": "", "label": "Full Width" },
+                { "value": "t4s-container", "label": "Container" }
+            ],
+            "default": "t4s-container"
+        },
+        {
+            "type": "image_picker",
+            "id": "main_collection_banner",
+            "label": "Add Banner Image"
+        },
+        {
+            "type": "header",
+            "content": "Select Collection List"
+        },
+        {
+            "type": "text", "id": "collection_title", "label": "Collection Title"
+        },
+        {
+            "type": "collection_list",
+            "id": "collection_list",
+            "label": "Collections"
+        }
+    ],
+    "presets": [
+        {
+            "name": "Stylish Collection-List"
+        }
+    ]
+}
+{% endschema %}
