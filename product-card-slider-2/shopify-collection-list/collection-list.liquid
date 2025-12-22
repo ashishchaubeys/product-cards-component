@@ -602,7 +602,7 @@
 
         <!-- Deals Section - Slider on Right -->
         <div class="deals-section">
-            <h2 class="deals-title">{{section.settings.collection_title | escape }}</h2>
+            <h2 class="deals-title">{{section.settings.collection_title | escape | default: 'Collection Title' }}</h2>
 
             {%- comment -%}
                 ============================================
