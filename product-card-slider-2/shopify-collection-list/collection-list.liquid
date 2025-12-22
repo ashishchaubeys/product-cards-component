@@ -551,37 +551,72 @@
             }
         }
     </style>
+    {%- comment -%}
+        ============================================
+        PLACEHOLDER COLLECTIONS SETUP
+        ============================================
+        If no collections are selected in the theme editor, we use 6 default placeholder collections
+        to ensure the slider always works and displays content.
+    {%- endcomment -%}
     {%- assign collections_list = section.settings.collection_list -%}
+    {%- assign placeholder_collections = 'collection-1,collection-2,collection-3,collection-4,collection-5,collection-6' | split: ',' -%}
 
     <div class="container {{ section.settings.container_type }}">
         <!-- Hero Section - Fixed on Left -->
-        {%- if section.settings.main_collection_banner != blank -%}
-            <div class="hero-section">
-                <img src="{{ section.settings.main_collection_banner | image_url: width: 1200 }}" 
-                     alt="{{ section.settings.main_collection_banner.alt | default: 'Collection Banner' }}" 
-                     class="hero-img"
-                     loading="lazy"
-                     width="{{ section.settings.main_collection_banner.width }}"
-                     height="{{ section.settings.main_collection_banner.height }}">
-                <div class="hero-overlay">
-                    <div class="limited-offers">Limited Offers</div>
-                    <h1 class="hero-title">Unlock Exclusive<br>Savings On<br>New Arrivals</h1>
-                    {%- if section.settings.collection_list.first != blank -%}
-                        <a href="{{ section.settings.collection_list.first.url }}" class="shop-btn">Shop Now →</a>
-                    {%- else -%}
-                        <a href="/collections/all" class="shop-btn">Shop Now →</a>
-                    {%- endif -%}
-                </div>
+        <div class="hero-section">
+        {%- comment -%}
+            Hero Banner Image Logic:
+            - If banner image is uploaded: Display the uploaded image
+            - If no banner image: Use Shopify's placeholder SVG (collection-1) as fallback
+            This ensures the hero section always has visual content
+        {%- endcomment -%}
+        {% if section.settings.main_collection_banner != blank %}
+            <img
+            src="{{ section.settings.main_collection_banner | image_url: width: 1200 }}"
+            alt="{{ section.settings.main_collection_banner.alt | default: 'Collection Banner' }}"
+            class="hero-img"
+            loading="lazy"
+            width="{{ section.settings.main_collection_banner.width }}"
+            height="{{ section.settings.main_collection_banner.height }}"
+            >
+        {% else %}
+            {{ 'collection-1' | placeholder_svg_tag: 'hero-img placeholder-img' }}
+        {% endif %}
+
+            <div class="hero-overlay">
+                <div class="limited-offers">Limited Offers</div>
+                <h1 class="hero-title">
+                Unlock Exclusive<br>
+                Savings On<br>
+                New Arrivals
+                </h1>
+
+                {% if section.settings.collection_list.first != blank %}
+                <a href="{{ section.settings.collection_list.first.url }}" class="shop-btn">Shop Now →</a>
+                {% else %}
+                <a href="/collections/all" class="shop-btn">Shop Now →</a>
+                {% endif %}
             </div>
-        {%- endif -%}
+        </div>
+
 
         <!-- Deals Section - Slider on Right -->
         <div class="deals-section">
             <h2 class="deals-title">{{section.settings.collection_title | escape }}</h2>
 
-            {%- if collections_list != blank and collections_list.size > 0 -%}
-                <div class="swiper slides-equal-height" id="collection-swiper-{{ section.id }}">
-                    <div class="swiper-wrapper">
+            {%- comment -%}
+                ============================================
+                COLLECTION SLIDER WITH PLACEHOLDER SUPPORT
+                ============================================
+                The swiper is always rendered (not conditionally) to ensure JavaScript initialization works.
+                Inside, we check if real collections exist:
+                - If YES: Loop through and display real collections with their images/products
+                - If NO: Loop through 6 placeholder collections (collection-1 through collection-6)
+            {%- endcomment -%}
+            <div class="swiper slides-equal-height" id="collection-swiper-{{ section.id }}">
+                <div class="swiper-wrapper">
+                    {%- comment -%} Display real collections if they are selected in theme editor {%- endcomment -%}
+                    {%- if collections_list != blank and collections_list.size > 0 -%}
                         {%- for collection in collections_list -%}
                             <div class="swiper-slide">
                                 <a href="{{ collection.url }}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
@@ -592,11 +627,7 @@
                                             <div class="price-container">
                                                 <span class="price">
                                                     {{ product_count }} 
-                                                    {%- if product_count == 1 -%}
-                                                        / nos
-                                                    {%- else -%}
-                                                        / nos
-                                                    {%- endif -%}
+                                                    / nos
                                                 </span>
                                             </div>
                                         {%- endif -%}
@@ -626,76 +657,120 @@
                                 </a>
                             </div>
                         {%- endfor -%}
-                    </div>
+                    {%- else -%}
+                        {%- comment -%}
+                            PLACEHOLDER COLLECTIONS FALLBACK:
+                            When no collections are selected, display 6 placeholder collection cards.
+                            Each placeholder uses Shopify's placeholder_svg_tag filter to show a default image.
+                            - Shows "0 nos" as product count
+                            - Uses placeholder SVG image (collection-1, collection-2, etc.)
+                            - Links to /collections/[placeholder-name] (these may not exist, but structure is maintained)
+                        {%- endcomment -%}
+                        {%- for placeholder_name in placeholder_collections -%}
+                            <div class="swiper-slide">
+                                <a href="/collections/{{ placeholder_name }}" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+                                    <div class="product-img-container">
+                                        <div class="eye-icon">👁</div>
+                                        <div class="price-container">
+                                            <span class="price">0 / nos</span>
+                                        </div>
+                                        {{ placeholder_name | placeholder_svg_tag: 'product-img placeholder-img' }}
+                                    </div>
+                                    <div class="product-info">
+                                        <h3 class="product-name">{{ placeholder_name }}</h3>
+                                    </div>
+                                </a>
+                            </div>
+                        {%- endfor -%}
+                    {%- endif -%}
                 </div>
-            {%- else -%}
-                <div class="swiper slides-equal-height">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide" style="padding: 40px; text-align: center;">
-                            <p>No collections found. Please select collections in the theme editor.</p>
-                        </div>
-                    </div>
-                </div>
-            {%- endif -%}
+            </div>
 
+            {%- comment -%}
+                ============================================
+                NAVIGATION CONTROLS (ALWAYS VISIBLE)
+                ============================================
+                Navigation controls are always rendered (not conditional) because:
+                1. The swiper JavaScript needs these elements to initialize properly
+                2. Placeholder collections also need navigation to work
+                3. This ensures consistent functionality whether using real or placeholder collections
+            {%- endcomment -%}
             <!-- Navigation arrows & progress bar -->
-            {%- if collections_list != blank and collections_list.size > 0 -%}
-                <div class="swiper-controls">
-                    <div class="swiper-pagination swiper-pagination-progressbar swiper-pagination-horizontal" id="swiper-pagination-{{ section.id }}"></div>
+            <div class="swiper-controls">
+                <div class="swiper-pagination swiper-pagination-progressbar swiper-pagination-horizontal" id="swiper-pagination-{{ section.id }}"></div>
 
-                    <div class="swiper-navigation nav-right">
-                        <button class="swiper-nav swiper-nav-prev swiper-button-prev" id="swiper-prev-{{ section.id }}" type="button" aria-label="Previous slide">
-                            <svg width="42" height="18" viewBox="0 0 42 18" fill="none">
-                                <path d="M0.000782013 9H41.3008V10H2.40078L9.70078 17.3L9.00078 18L0.000782013 9Z" fill="currentColor"></path>
-                            </svg>
-                        </button>
-                        <button class="swiper-nav swiper-nav-next swiper-button-next" id="swiper-next-{{ section.id }}" type="button" aria-label="Next slide">
-                            <svg width="42" height="18" viewBox="0 0 42 18" fill="none">
-                                <path d="M41.9992 9H0.699219V8H39.5992L32.2992 0.7L32.9992 0L41.9992 9Z" fill="currentColor"></path>
-                            </svg>
-                        </button>
-                    </div>
+                <div class="swiper-navigation nav-right">
+                    <button class="swiper-nav swiper-nav-prev swiper-button-prev" id="swiper-prev-{{ section.id }}" type="button" aria-label="Previous slide">
+                        <svg width="42" height="18" viewBox="0 0 42 18" fill="none">
+                            <path d="M0.000782013 9H41.3008V10H2.40078L9.70078 17.3L9.00078 18L0.000782013 9Z" fill="currentColor"></path>
+                        </svg>
+                    </button>
+                    <button class="swiper-nav swiper-nav-next swiper-button-next" id="swiper-next-{{ section.id }}" type="button" aria-label="Next slide">
+                        <svg width="42" height="18" viewBox="0 0 42 18" fill="none">
+                            <path d="M41.9992 9H0.699219V8H39.5992L32.2992 0.7L32.9992 0L41.9992 9Z" fill="currentColor"></path>
+                        </svg>
+                    </button>
                 </div>
-            {%- endif -%}
+            </div>
         </div>
     </div>
 
     <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        {%- if collections_list != blank and collections_list.size > 0 -%}
+        {%- comment -%}
+            ============================================
+            SWIPER JAVASCRIPT INITIALIZATION
+            ============================================
+            This script initializes the Swiper slider for the collection list.
+            
+            IMPORTANT: The script runs UNCONDITIONALLY (not wrapped in Liquid conditionals)
+            because:
+            1. Placeholder collections need the slider to work
+            2. Real collections also need the slider
+            3. The swiper HTML structure is always present in the DOM
+            
+            The script uses a retry mechanism to ensure Swiper library is loaded before initialization.
+        {%- endcomment -%}
         (function() {
             const sectionId = '{{ section.id }}';
             const swiperSelector = '#collection-swiper-' + sectionId;
             let swiperInstance = null;
             let retryCount = 0;
-            const maxRetries = 50; // Maximum 5 seconds of retries
+            const maxRetries = 50; // Maximum 5 seconds of retries (50 attempts × 100ms = 5 seconds)
             
+            /**
+             * Initialize Swiper slider
+             * This function handles both real collections and placeholder collections
+             */
             function initSwiper() {
                 retryCount++;
                 
-                // Stop retrying after max attempts
+                // Stop retrying after max attempts to prevent infinite loops
                 if (retryCount > maxRetries) {
                     console.error('Swiper initialization failed after maximum retries');
                     return;
                 }
                 
-                // Wait for Swiper library to be ready
+                // Wait for Swiper library to be loaded from CDN (defer attribute may delay loading)
                 if (typeof Swiper === 'undefined') {
                     setTimeout(initSwiper, 100);
                     return;
                 }
                 
+                // Get all required DOM elements for Swiper initialization
+                // These elements are always present (for both real and placeholder collections)
                 const swiperElement = document.querySelector(swiperSelector);
                 const paginationEl = document.querySelector('#swiper-pagination-' + sectionId);
                 const nextEl = document.querySelector('#swiper-next-' + sectionId);
                 const prevEl = document.querySelector('#swiper-prev-' + sectionId);
                 
+                // If any required element is missing, retry (DOM might not be ready yet)
                 if (!swiperElement || !paginationEl || !nextEl || !prevEl) {
                     setTimeout(initSwiper, 100);
                     return;
                 }
                 
-                // Destroy existing swiper instance if it exists
+                // Destroy existing swiper instance if it exists (prevents duplicate instances)
                 if (swiperInstance) {
                     try {
                         swiperInstance.destroy(true, true);
@@ -703,6 +778,11 @@
                     swiperInstance = null;
                 }
                 
+                /**
+                 * Initialize Swiper with configuration
+                 * This configuration works for both real collections and placeholder collections
+                 * The breakpoints ensure responsive behavior across all device sizes
+                 */
                 try {
                     swiperInstance = new Swiper(swiperSelector, {
                     // Base config for the smallest widths (< 320px)
@@ -777,16 +857,23 @@
                 }
             }
             
-            // Initialize Swiper when DOM is ready
+            /**
+             * Initialize Swiper when DOM is ready
+             * This ensures the script runs after the page loads, whether using real or placeholder collections
+             */
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', function() {
-                    setTimeout(initSwiper, 200);
+                    setTimeout(initSwiper, 200); // Small delay to ensure all elements are rendered
                 });
             } else {
-                setTimeout(initSwiper, 200);
+                setTimeout(initSwiper, 200); // DOM already ready, but wait a bit for elements
             }
             
-            // Handle window resize with debounce
+            /**
+             * Handle window resize with debounce
+             * Updates Swiper when window size changes to recalculate slide positions
+             * Works for both real collections and placeholder collections
+             */
             let resizeTimer;
             window.addEventListener('resize', function() {
                 clearTimeout(resizeTimer);
@@ -796,10 +883,9 @@
                         swiperInstance.updateSlides();
                         swiperInstance.updateSlidesClasses();
                     }
-                }, 250);
+                }, 250); // Debounce: wait 250ms after resize stops
             });
         })();
-        {%- endif -%}
     </script>
 
 {% schema %}
